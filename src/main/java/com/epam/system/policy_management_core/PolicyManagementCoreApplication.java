@@ -2,6 +2,10 @@ package com.epam.system.policy_management_core;
 
 import com.epam.system.policy_management_core.filter.JwtRequestFilter;
 import com.epam.system.policy_management_core.service.MyUserDetailsService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -20,6 +24,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 @SpringBootApplication
 @RequiredArgsConstructor
 @Slf4j
@@ -29,8 +37,12 @@ public class PolicyManagementCoreApplication {
 	private final MyUserDetailsService myUserDetailsService;
 	private final JwtRequestFilter jwtRequestFilter;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws JsonProcessingException {
 		SpringApplication.run(PolicyManagementCoreApplication.class, args);
+		ObjectMapper om = new ObjectMapper();
+		Set<String> set = new HashSet<>(Arrays.asList("Java", "Python"));
+		String omset = om.writeValueAsString(set);
+		System.out.println(omset);
 	}
 
 	@Bean
@@ -47,7 +59,7 @@ public class PolicyManagementCoreApplication {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)  // Updated way to disable CSRF
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/login").permitAll()
+						.requestMatchers("/auth/login","/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.anyRequest().authenticated()
 				)
 				.sessionManagement(session -> session
@@ -64,5 +76,16 @@ public class PolicyManagementCoreApplication {
 		System.out.println("passwordEncoder start: ");
 		return new BCryptPasswordEncoder();
 	}
+
+	public class OpenAPIConfig {
+              @Bean
+              public OpenAPI customOpenAPI() {
+                       return new OpenAPI()
+                                      .info(new Info()
+                                                       .title("Policy Management System")
+                                                      .version("1.0")
+                                                    .description("REST APIs for managing policies and users."));
+             }
+       }
 
 }

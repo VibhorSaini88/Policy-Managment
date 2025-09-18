@@ -9,6 +9,7 @@ import com.epam.system.policy_management_core.service.CreatePolicyUserService;
 import com.epam.system.policy_management_core.service.GetPolicyUserService;
 import com.epam.system.policy_management_core.service.NotificationContext;
 import com.epam.system.policy_management_core.service.UpdatePolicyUserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -71,6 +72,7 @@ public class NotificationController {
         return "Notification send using: type: "+type+" :: Email: "+user.getEmail()+" :: sms: "+user.getSms()+" :: name: "+user.getName()+" "+" :: "+user.getId();
     }
 
+    @Operation(summary = "Get user by ID", description = "Returns a single user")
     @GetMapping(path = "/get/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')"    )
     public ResponseEntity<PolicyUser> getPolicyUser(@PathVariable("id") String eUserId, @RequestParam(required = false) String name, WebRequest request){

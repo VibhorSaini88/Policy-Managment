@@ -18,7 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 public class CreatePolicyUserService {
 
     @Autowired
-    private PolicyUserRepository policyUserRepository;
+    private final PolicyUserRepository policyUserRepository;
     private final RestTemplateBuilder restTemplateBuilder;
     private static final String EXTNAL_URL = "http://localhost:8080/api/policyUser/post/rt-user";
 
